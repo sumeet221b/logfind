@@ -8,6 +8,7 @@
 
 void Die(const char *message);
 int IsContain(const char *str, const char *contain);
+int CheckForArgs(int argc, char **argv, char *str);
 
 int main(int argc, char *argv[]) {
 
@@ -16,6 +17,7 @@ int main(int argc, char *argv[]) {
     char **log_list = NULL;
     char *str;
     char *pos;
+    int line_number = 0;
 
 
     int i = 0, strcount = 0;
@@ -49,10 +51,16 @@ int main(int argc, char *argv[]) {
         }
         
         // Read contents of log_file
+        line_number = 0;
         while(fgets(str, 1024, log_file)) {
+            
+            line_number++;
+
             if ((pos=strchr(str, '\n')) != NULL)
                 *pos = '\0';
-            printf("%s\n", str);
+            if(CheckForArgs(argc, argv, str)) {
+                printf("[+]%s:%d %s\n", log_list[i], line_number, str);
+            }
         }
 
         fclose(log_file);
@@ -104,4 +112,27 @@ int IsContain(const char *str, const char *contain) {
         }
     }
     return 0;
+}
+
+int CheckForArgs(int argc, char **argv, char *str) {
+    int i = 0;
+    int is_contain = 0;
+    
+    if(IsContain(str, argv[1])) {
+        is_contain = 1;
+        for(i = 1; i < argc && (is_contain > 0); i++) {
+            if(!IsContain(str, argv[i])) {
+                is_contain = 0;
+            } 
+        }
+
+        if(is_contain) {
+            return 1;
+        } else {
+            return 0;
+        }
+
+    } else {
+        return 0;
+    }
 }
