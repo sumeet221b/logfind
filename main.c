@@ -54,12 +54,22 @@ int main(int argc, char *argv[]) {
                 *pos = '\0';
             printf("%s\n", str);
         }
+
+        fclose(log_file);
     }
 
 
 
     // Close log_list_file
     fclose(log_list_file);
+
+    // free all alocated memory
+     for(i = 0; i < strcount; i++)
+        free(log_list[i]);
+
+    free(log_list);
+
+    free(str);
 
     return 0;
 
